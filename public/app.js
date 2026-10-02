@@ -7,12 +7,12 @@ const btnLoading = submitBtn.querySelector('.btn-loading');
 const dreamsContainer = document.getElementById('dreamsContainer');
 
 // Load dreams on page load
-document.addEventListener('DOMContentLoaded', loadDreams); 
+document.addEventListener('DOMContentLoaded', loadDreams);
 
 // Form submission
 dreamForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const dream = dreamText.value.trim();
     if (!dream) return;
 
@@ -33,15 +33,18 @@ dreamForm.addEventListener('submit', async (e) => {
             body: JSON.stringify({ dream_text: dream }),
         });
 
+        const data = await response.json();
 
         if (!response.ok) {
             showErrorMessage(data.error || 'Failed to process your dream. Please try again.');
             return;
         }
-        
+
+        const newDream = data;
+
         // Clear form
         dreamText.value = '';
-        
+
         // Reload dreams
         await loadDreams();
 
@@ -129,13 +132,13 @@ async function deleteDream(id) {
         if (!response.ok) {
             throw new Error('Failed to delete dream');
         }
-        
+
         await loadDreams();
     } catch (error) {
         console.error('Error:', error);
     }
 }
- 
+
 // Format date
 function formatDate(dateString) {
     const date = new Date(dateString);
@@ -161,7 +164,7 @@ function toggleInterpretation(event) {
     const btn = event.target;
     const interpretationDiv = btn.previousElementSibling;
     const isExpanded = interpretationDiv.dataset.expanded === 'true';
-    
+
     if (isExpanded) {
         interpretationDiv.textContent = interpretationDiv.dataset.truncated;
         interpretationDiv.dataset.expanded = 'false';
